@@ -75,7 +75,7 @@
  function submitClick(){
  var sku = document.getElementById("sku").value;
  if(sku.trim()!=''){
-  fetch('http://172.104.198.222:8080/inventory/inventory/'+sku).then(function (response) {
+  fetch('http://localhost:8080/inventory/'+sku).then(function (response) {
 	// The API call was successful!
 
 	if (response.status=='200') {

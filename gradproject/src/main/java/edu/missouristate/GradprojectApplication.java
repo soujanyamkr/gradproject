@@ -18,5 +18,15 @@ public class GradprojectApplication extends SpringBootServletInitializer {
 	    protected SpringApplicationBuilder configure (SpringApplicationBuilder builder) {
 	        return builder.sources(GradprojectApplication.class);
 	    }
+	 @Controller
+	 public class HomeController {
+	 	
+	 	@RequestMapping("/home")
+	 	public String home(Model model) {
+	 		
 
+	 		return "home";
+	 	}
+
+	 }
 }
