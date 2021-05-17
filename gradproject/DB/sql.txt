@@ -1,0 +1,23 @@
+CREATE DATABASE  `gradproject` ;
+
+USE `gradproject`;
+
+DROP TABLE IF EXISTS `gradproject.inventory`;
+
+CREATE TABLE `gradproject.inventory` (
+  `SKU` int NOT NULL,
+  `DESCRIPTION` varchar(64) ,
+  `PRICE` decimal(10,2) ,
+  `TAXABLE` boolean,
+  PRIMARY KEY (`SKU`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
+
+insert into gradproject.inventory(SKU,DESCRIPTION,PRICE,TAXABLE) VALUES(100001,"Bread",1.49,1);
+insert into gradproject.inventory(SKU,DESCRIPTION,PRICE,TAXABLE) VALUES(100002,"Milk",3.49,1);
+insert into gradproject.inventory(SKU,DESCRIPTION,PRICE,TAXABLE) VALUES(100003,"Eggs",2.56,1);
+insert into gradproject.inventory(SKU,DESCRIPTION,PRICE,TAXABLE) VALUES(100004,"Peanut Butter",3.91,1);
+insert into gradproject.inventory(SKU,DESCRIPTION,PRICE,TAXABLE) VALUES(100005,"Jelly",4.23,1);
+insert into gradproject.inventory(SKU,DESCRIPTION,PRICE,TAXABLE) VALUES(100006,"M&ms",1.25,1);
+insert into gradproject.inventory(SKU,DESCRIPTION,PRICE,TAXABLE) VALUES(100007,"Visa Gift Card",5.00,0);
+
+

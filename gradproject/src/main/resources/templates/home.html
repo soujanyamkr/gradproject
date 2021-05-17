@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+ <title>Inventory</title>
+ <meta charset="utf-8">
+ <meta name="viewport" content="width=device-width, initial-scale=1">
+ <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+ <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+ <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+ <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+
+ <style>
+.textBoxstyle{
+    width: 100%;
+    padding: 5px;
+    font-size: 12px;
+    border: 1px solid #7079e8;
+    height: 35px;
+    color: #000;
+}
+.textBoxContainer{
+    display: inline-block;
+    width: 200px;
+    padding: 0px 5px 0px 0px;
+	}
+	.skuGridTotal{
+    width: 100%;
+    height: auto;
+    border-radius: 4px;
+    margin: 10px 0px;
+	vertical-align: top;
+	display:inline-block
+	}
+
+.skuGrid{
+    border: 1px solid #7079e8;
+    border-radiu: 3px;
+    width: 100%;
+    height: 210px;
+    border-radius: 4px;
+    margin: 20px 0px;
+	vertical-align: top;
+    overflow-y: auto;
+	display:inline-block}
+
+
+    table.tableStyle{
+	width:100%;
+	}
+
+	table.tableStyle td{
+	color:#000;
+	font-size:16px;
+	padding:5px 10px;
+	}
+	table.tableStyle td:nth-child(2){
+	width:10px;
+	text-align: right;
+	}
+	table.tableStyle td:last-child{
+	width:70px;
+	text-align: right;
+	}
+
+</style>
+ <script>
+ var divdata = [];
+ var taxRate=8.1;
+ var subTotal=0;
+ var taxes=0;
+ var total=0;
+ var taxableAMount=0;
+
+ function submitClick(){
+ var sku = document.getElementById("sku").value;
+ if(sku.trim()!=''){
+  fetch('http://172.104.198.222:8080/inventory/inventory/'+sku).then(function (response) {
+	// The API call was successful!
+
+	if (response.status=='200') {
+		return response.json();
+	}else if (response.status=='204') {
+
+		alert("SKU does not exists");
+			document.getElementById("sku").value='';
+		return ;
+	} else {
+		return Promise.reject(response);
+	}
+}).then(function (data) {
+	// This is the JSON from our response
+	if(data!=undefined){
+	divdata.push(data);
+	document.getElementById("sku").value='';
+	displayData();
+	console.log(data);
+	}
+}).catch(function (err) {
+	// There was an error
+	console.log('Something went wrong.', err);
+});
+}else{
+alert("Please Enter SKU");
+}
+}
+
+function displayData(){
+var output='';
+subTotal=0;
+total=0;
+taxableAMount=0;
+for(var i=0;i<divdata.length;i++)
+{
+output=output+"<tr><td>"+divdata[i].description+".............................................."+"</td><td>"+((divdata[i].taxable==true)?'t':'n')+"</td><td>"+divdata[i].price+"</td></tr>";
+subTotal=parseFloat(subTotal)+parseFloat(divdata[i].price);
+if(divdata[i].taxable==true){
+taxableAMount=parseFloat(taxableAMount)+parseFloat(divdata[i].price);
+}
+}
+taxes=(parseFloat(taxableAMount)*parseFloat(taxRate))/100;
+taxes=parseFloat(taxes).toFixed(2);
+subTotal=parseFloat(subTotal).toFixed(2);
+total=parseFloat(subTotal)+parseFloat(taxes);
+total=parseFloat(total).toFixed(2);
+document.getElementById("tablebody").innerHTML = output;
+document.getElementById("subTotalVal").innerHTML = "$"+ subTotal;
+document.getElementById("taxesVal").innerHTML = taxes;
+document.getElementById("totalVal").innerHTML ="$"+ total;
+document.getElementById("totalPrice").innerHTML = "$"+total;
+}
+function load(){
+document.getElementById("taxRateVal").innerHTML = taxRate+"%";
+document.getElementById("subTotalVal").innerHTML = "$"+ subTotal;
+document.getElementById("taxesVal").innerHTML = taxes;
+document.getElementById("totalVal").innerHTML ="$"+ total;
+document.getElementById("totalPrice").innerHTML = "$"+total;
+}
+
+ </script>
+</head>
+<body onload="load()">
+<div class="container-fluid" style="background: #f8f9fa;
+    box-shadow: 1px 2px 3px rgb(0 0 0 / 10%);">
+ <div class="container">
+  <nav class="navbar navbar-expand-lg navbar-light bg-light">
+   <!--<a class="navbar-brand" href="#">Logo</a>-->
+   <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo03" aria-controls="navbarTogglerDemo03" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+   </button>
+   <div class="collapse navbar-collapse" id="navbarTogglerDemo03">
+    <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+     <li class="nav-item active">
+      <a class="nav-link" >Home</a>
+     </li>
+
+    </ul>
+
+   </div>
+  </nav>
+ </div>
+</div>
+
+<div class="container col-lg-6 col-md-8 col-sm-8 col" style="padding:30px 50px">
+ <div class="row">
+  <div class="col-md-12"><div style="font-size:18px;font-weight:500;margin:5px 0px">Enter SKU</div><div class="textBoxContainer"><input type="number" class="textBoxstyle" name="sku" id="sku" placeholder="Enter SKU..."/></div>
+   <div style="display:inline-block;width:100px;"><div class="btn" style="background-color: #7079e8;
+    color: #fff;" onclick="submitClick()">Submit</div></div>
+  </div>
+ </div>
+
+ <div class="row">
+  <div class="col-md-12">
+   <div class="skuGrid">
+    <table class="tableStyle" style="width:100%;">
+     <tbody id="tablebody">
+     <!--<tr><td>Bread........................</td><td>t</td><td>1.49</td></tr>-->
+     <!--<tr><td>Milk.........................</td><td>t</td><td>3.49</td></tr>-->
+     <!--<tr><td>Eggs.......................</td><td>t</td><td>2.56</td></tr>-->
+     <!--<tr><td>Peanut Butter................</td><td>t</td><td>3.91</td></tr>-->
+     <!--<tr><td>Jelly..................</td><td>t</td><td>4.23</td></tr>-->
+     <!--<tr><td>M&amp;Ms..................</td><td>t</td><td>1.25</td></tr>-->
+     <!--<tr><td>Visa Gift Card..................</td><td>n</td><td>5.00</td></tr>-->
+     </tbody>
+    </table>
+   </div>
+
+
+   <div class="skuGrid" style="height:140px;margin: 5px 0px;">
+    <table class="tableStyle" style="width:100%;">
+     <tbody>
+     <tr><td>Subtotal</td><td id="subTotalVal"></td></tr>
+     <tr><td>Tax Rate</td><td id="taxRateVal"></td></tr>
+     <tr><td>Taxes</td><td id="taxesVal"></td></tr>
+     <tr><td>Total</td><td id="totalVal"></td></tr>
+     </tbody>
+    </table>
+   </div>
+
+   <div class="skuGridTotal">
+    <table class="tableStyle" style="width:100%;">
+     <tbody>
+     <tr><td style="font-size:22px;font-weight:500">TOTAL PRICE</td><td style="font-size:22px;font-weight:500" id="totalPrice"></td></tr>
+     </tbody>
+    </table>
+   </div>
+
+
+  </div>
+ </div>
+
+</div>
+
+<!-- Footer -->
+<footer class="page-footer font-small blue pt-4">
+ <div class="footer-copyright text-center py-3">© 2021 Copyright:
+  Soujanya
+ </div>
+</footer>
+
+
+</body>
+</html>
+
+
